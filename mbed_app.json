@@ -1,2 +1,5 @@
 {
+  "macros": [
+        "APP_SID=\"psa_august_control_srv_ifs.h\""
+  ]
 }

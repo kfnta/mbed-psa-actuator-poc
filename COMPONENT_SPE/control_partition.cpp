@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-#include "psa_platform_partition.h"
-#include "platform_srv_impl.h"
-#include "psa/internal_trusted_storage.h"
+#include "psa_august_control_srv_partition.h"
 #include "psa/service.h"
 #include "mbed.h"
 
@@ -60,9 +58,9 @@ static psa_status_t august_process_packet(psa_msg_t *msg)
         return PSA_ERROR_CONNECTION_BUSY;
     }
 
-    mail.packet_size = msg->in_size[0];
+    mail->packet_size = msg->in_size[0];
 
-    psa_read(msg->handle, 0, mail.packet, PACKET_SIZE);
+    psa_read(msg->handle, 0, mail->packet, PACKET_SIZE);
     
     mail_box.put(mail);
     
@@ -95,7 +93,7 @@ extern "C" void august_control_entry_point(void *ptr)
     thread.start(callback(august_business_logic)); //spin-out business logic thread
 
     while (1) {
-        asserted_signals = psa_wait(PLATFORM_WAIT_ANY_SID_MSK, PSA_BLOCK);
+        asserted_signals = psa_wait(AUGUST_CONTROL_SRV_WAIT_ANY_SID_MSK, PSA_BLOCK);
         if ((asserted_signals & AUGUST_CONTROL_PROCESS_PACKET_MSK) != 0) {
             if (PSA_SUCCESS != psa_get(AUGUST_CONTROL_PROCESS_PACKET_MSK, &msg)) {
                 continue;
