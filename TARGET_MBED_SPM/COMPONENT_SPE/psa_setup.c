@@ -31,7 +31,7 @@
 #include "psa_crypto_srv_partition.h"
 #include "psa_platform_partition.h"
 #include "psa_its_partition.h"
-#include "psa_august_control_srv_partition.h"
+#include "psa_actuator_control_srv_partition.h"
 
 extern const uint32_t attest_srv_external_sids[7];
 extern const uint32_t crypto_srv_external_sids[4];
@@ -79,13 +79,13 @@ spm_partition_t g_partitions[5] = {
         .irq_mapper = NULL,
     },
     {
-        .partition_id = AUGUST_CONTROL_SRV_ID,
+        .partition_id = ACTUATOR_CONTROL_SRV_ID,
         .thread_id = 0,
-        .flags = AUGUST_CONTROL_SRV_WAIT_ANY_SID_MSK | AUGUST_CONTROL_SRV_WAIT_ANY_IRQ_MSK,
+        .flags = ACTUATOR_CONTROL_SRV_WAIT_ANY_SID_MSK | ACTUATOR_CONTROL_SRV_WAIT_ANY_IRQ_MSK,
         .rot_services = NULL,
-        .rot_services_count = AUGUST_CONTROL_SRV_ROT_SRV_COUNT,
+        .rot_services_count = ACTUATOR_CONTROL_SRV_ROT_SRV_COUNT,
         .extern_sids = NULL,
-        .extern_sids_count = AUGUST_CONTROL_SRV_EXT_ROT_SRV_COUNT,
+        .extern_sids_count = ACTUATOR_CONTROL_SRV_EXT_ROT_SRV_COUNT,
         .irq_mapper = NULL,
     },
 };
@@ -102,7 +102,7 @@ void attest_srv_init(spm_partition_t *partition);
 void crypto_srv_init(spm_partition_t *partition);
 void platform_init(spm_partition_t *partition);
 void its_init(spm_partition_t *partition);
-void august_control_srv_init(spm_partition_t *partition);
+void actuator_control_srv_init(spm_partition_t *partition);
 
 uint32_t init_partitions(spm_partition_t **partitions)
 {
@@ -114,7 +114,7 @@ uint32_t init_partitions(spm_partition_t **partitions)
     crypto_srv_init(&(g_partitions[1]));
     platform_init(&(g_partitions[2]));
     its_init(&(g_partitions[3]));
-    august_control_srv_init(&(g_partitions[4]));
+    actuator_control_srv_init(&(g_partitions[4]));
 
     *partitions = g_partitions;
     return 5;

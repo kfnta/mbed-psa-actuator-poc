@@ -1,15 +1,15 @@
 {
-    "name": "AUGUST_CONTROL_SRV",
+    "name": "ACTUATOR_CONTROL_SRV",
     "type": "APPLICATION-ROT",
     "priority": "NORMAL",
     "id": "0x00010008",
-    "entry_point": "august_control_entry_point",
+    "entry_point": "actuator_control_entry_point",
     "stack_size": "0x400",
     "heap_size": "0x400",
     "services": [{
-        "name": "AUGUST_CONTROL_PROCESS_PACKET",
+        "name": "ACTUATOR_CONTROL_PROCESS_PACKET",
         "identifier": "0x01011000",
-        "signal": "AUGUST_CONTROL_PROCESS_PACKET_MSK",
+        "signal": "ACTUATOR_CONTROL_PROCESS_PACKET_MSK",
         "non_secure_clients": true,
         "minor_version": 1,
         "minor_policy": "RELAXED"

@@ -28,33 +28,33 @@
 #include "rtx_os.h"
 #include "spm_panic.h"
 #include "spm_internal.h"
-#include "psa_august_control_srv_partition.h"
+#include "psa_actuator_control_srv_partition.h"
 #include "psa_manifest/sid.h"
 
 
 /* Threads stacks */
-MBED_ALIGN(8) uint8_t august_control_srv_thread_stack[1024] = {0};
+MBED_ALIGN(8) uint8_t actuator_control_srv_thread_stack[1024] = {0};
 
 /* Threads control blocks */
-osRtxThread_t august_control_srv_thread_cb = {0};
+osRtxThread_t actuator_control_srv_thread_cb = {0};
 
 /* Thread attributes - for thread initialization */
-osThreadAttr_t august_control_srv_thread_attr = {
-    .name = "august_control_srv",
+osThreadAttr_t actuator_control_srv_thread_attr = {
+    .name = "actuator_control_srv",
     .attr_bits = 0,
-    .cb_mem = &august_control_srv_thread_cb,
-    .cb_size = sizeof(august_control_srv_thread_cb),
-    .stack_mem = august_control_srv_thread_stack,
+    .cb_mem = &actuator_control_srv_thread_cb,
+    .cb_size = sizeof(actuator_control_srv_thread_cb),
+    .stack_mem = actuator_control_srv_thread_stack,
     .stack_size = 1024,
     .priority = osPriorityNormal,
     .tz_module = 0,
     .reserved = 0
 };
 
-spm_rot_service_t august_control_srv_rot_services[AUGUST_CONTROL_SRV_ROT_SRV_COUNT] = {
+spm_rot_service_t actuator_control_srv_rot_services[ACTUATOR_CONTROL_SRV_ROT_SRV_COUNT] = {
     {
-        .sid = AUGUST_CONTROL_PROCESS_PACKET,
-        .mask = AUGUST_CONTROL_PROCESS_PACKET_MSK,
+        .sid = ACTUATOR_CONTROL_PROCESS_PACKET,
+        .mask = ACTUATOR_CONTROL_PROCESS_PACKET_MSK,
         .partition = NULL,
         .min_version = 1,
         .min_version_policy = PSA_MINOR_VERSION_POLICY_RELAXED,
@@ -67,36 +67,36 @@ spm_rot_service_t august_control_srv_rot_services[AUGUST_CONTROL_SRV_ROT_SRV_COU
 };
 
 
-static osRtxMutex_t august_control_srv_mutex = {0};
-static const osMutexAttr_t august_control_srv_mutex_attr = {
-    .name = "august_control_srv_mutex",
+static osRtxMutex_t actuator_control_srv_mutex = {0};
+static const osMutexAttr_t actuator_control_srv_mutex_attr = {
+    .name = "actuator_control_srv_mutex",
     .attr_bits = osMutexRecursive | osMutexPrioInherit | osMutexRobust,
-    .cb_mem = &august_control_srv_mutex,
-    .cb_size = sizeof(august_control_srv_mutex),
+    .cb_mem = &actuator_control_srv_mutex,
+    .cb_size = sizeof(actuator_control_srv_mutex),
 };
 
 
-extern void august_control_entry_point(void *ptr);
+extern void actuator_control_entry_point(void *ptr);
 
-void august_control_srv_init(spm_partition_t *partition)
+void actuator_control_srv_init(spm_partition_t *partition)
 {
     if (NULL == partition) {
         SPM_PANIC("partition is NULL!\n");
     }
 
-    partition->mutex = osMutexNew(&august_control_srv_mutex_attr);
+    partition->mutex = osMutexNew(&actuator_control_srv_mutex_attr);
     if (NULL == partition->mutex) {
-        SPM_PANIC("Failed to create mutex for secure partition august_control_srv!\n");
+        SPM_PANIC("Failed to create mutex for secure partition actuator_control_srv!\n");
     }
 
-    for (uint32_t i = 0; i < AUGUST_CONTROL_SRV_ROT_SRV_COUNT; ++i) {
-        august_control_srv_rot_services[i].partition = partition;
+    for (uint32_t i = 0; i < ACTUATOR_CONTROL_SRV_ROT_SRV_COUNT; ++i) {
+        actuator_control_srv_rot_services[i].partition = partition;
     }
-    partition->rot_services = august_control_srv_rot_services;
+    partition->rot_services = actuator_control_srv_rot_services;
 
-    partition->thread_id = osThreadNew(august_control_entry_point, NULL, &august_control_srv_thread_attr);
+    partition->thread_id = osThreadNew(actuator_control_entry_point, NULL, &actuator_control_srv_thread_attr);
     if (NULL == partition->thread_id) {
-        SPM_PANIC("Failed to create start main thread of partition august_control_srv!\n");
+        SPM_PANIC("Failed to create start main thread of partition actuator_control_srv!\n");
     }
 }
 
