@@ -1,4 +1,4 @@
-#include "stddef.h"
+#include "mbed.h"
 #include "actuator.h"
 
 int main()
@@ -24,12 +24,21 @@ int main()
         0xE7, 0xD0, 0x5D, 0x35
     };
     size_t ciphertext_size=sizeof(ciphertext);
+    
+    psa_status_t status = PSA_SUCCESS;
+    while(true) {
+	status =  actuator_process_packet(
+            ciphertext, ciphertext_size,
+            additional_data, additional_data_size,
+            nonce, nonce_size
+        );
 
-    actuator_process_packet(
-        ciphertext, ciphertext_size,
-        additional_data, additional_data_size,
-        nonce, nonce_size
-    );
-
+	if (PSA_SUCCESS == status) {
+	    printf("message delivered\n");
+	} else {
+	    printf("message delivery failed (%ld)\n", status);
+	}
+	wait_ms(1000);
+    }
     return 0;
 }
