@@ -119,9 +119,19 @@ static void message_handler(psa_msg_t *msg, SignalHandler handler)
     psa_reply(msg->handle, status);
 }
 
-extern "C" void actuator_control_entry_point(void *ptr)
+Thread thread;
+
+void lazy_init()
 {
-    psa_crypto_init(); //make sure crypto partition is initialized
+    static int is_initialized = 0;
+    
+    if (is_initialized) {
+        return;
+    }
+
+    if (PSA_SUCCESS != psa_crypto_init()) {  //make sure crypto partition is initialized
+        error("Cannot initialize crypto");
+    }
     
     // provisioning use case
     {
@@ -146,17 +156,20 @@ extern "C" void actuator_control_entry_point(void *ptr)
         psa_import_key(key_handle, PSA_KEY_TYPE_AES, key_data, sizeof(key_data));
         psa_close_key(key_handle);
     }
-    
-    
+
+    thread.start(callback(actuator_business_logic)); //spin-out business logic thread
+
+    is_initialized = 1;
+}
+
+extern "C" void actuator_control_entry_point(void *ptr)
+{
     psa_signal_t asserted_signals = 0;
     psa_msg_t msg = {0};
     
-
-    Thread thread;
-    thread.start(callback(actuator_business_logic)); //spin-out business logic thread
-    
     while (1) {
         asserted_signals = psa_wait(ACTUATOR_CONTROL_SRV_WAIT_ANY_SID_MSK, PSA_BLOCK);
+        lazy_init();
         if ((asserted_signals & ACTUATOR_CONTROL_PROCESS_PACKET_MSK) != 0) {
             if (PSA_SUCCESS != psa_get(ACTUATOR_CONTROL_PROCESS_PACKET_MSK, &msg)) {
                 continue;
