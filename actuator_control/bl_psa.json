@@ -1,0 +1,26 @@
+{
+    "name": "BL_SRV",
+    "type": "APPLICATION-ROT",
+    "priority": "NORMAL",
+    "id": "0x00010009",
+    "entry_point": "actuator_business_logic",
+    "stack_size": "0x400",
+    "heap_size": "0x400",
+    "services": [{
+        "name": "DUMMY",
+        "identifier": "0x01014000",
+        "signal": "DUMMY_MSK",
+        "non_secure_clients": true,
+        "minor_version": 1,
+        "minor_policy": "RELAXED"
+      }
+    ],
+    "extern_sids": [
+      "PSA_AEAD_ID",
+      "PSA_CRYPTO_INIT_ID",
+      "PSA_KEY_MNG_ID"
+    ],
+    "source_files": [
+      "COMPONENT_SPE/control_partition.cpp"
+    ]
+  }
