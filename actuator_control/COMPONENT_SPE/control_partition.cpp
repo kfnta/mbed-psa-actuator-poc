@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-#include "psa_actuator_control_srv_partition.h"
+#include "mbed_spm_partitions.h"
 #include "psa/crypto.h"
 #include "psa/service.h"
 #include "mbed.h"
