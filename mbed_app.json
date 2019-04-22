@@ -1,0 +1,16 @@
+{
+    "target_overrides": {
+        "CY8CKIT_062_WIFI_BT_M0_PSA": {
+            "storage_tdb_internal.internal_size": "0x8000",
+            "storage_tdb_internal.internal_base_address": "0x10078000",
+            "target.secure-rom-size": "0x80000",
+            "target.non-secure-rom-start": "0x10080000",
+            "target.non-secure-rom-size": "0x78000"
+        },
+        "CY8CKIT_062_WIFI_BT_PSA": {
+            "target.secure-rom-size": "0x80000",
+            "target.non-secure-rom-start": "0x10080000",
+            "target.non-secure-rom-size": "0x78000"
+        }
+    }
+}
